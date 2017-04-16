@@ -36,6 +36,9 @@ module.exports = function (env) {
             entry: {
                 app: PATHS.entry,
                 vendor: [
+                    'angular',
+                    'angular-resource',
+                    'angular-ui-router',
                     'lodash'
                 ]
             },
