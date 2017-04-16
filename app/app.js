@@ -7,6 +7,9 @@
     require('angular-resource');
     require('angular-ui-router');
 
+    /*require('../imgs/img.png');
+    require('../imgs/img.jpg');*/
+
     const moduleName = BUILD.MAIN_MODULE_NAME;
 
     const appDependencies = [

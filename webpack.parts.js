@@ -88,14 +88,14 @@ exports.extractCSS = function (paths) {
             rules: [{
                 test: /\.scss$/,
                 include: paths,
-                loader: ExtractTextPlugin.extract({
-                    fallbackLoader: "style-loader",
-                    loader: [
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: [
                         { loader: 'css-loader', query: {sourceMap: true} },
                         { loader: 'postcss-loader' },
                         { loader: 'sass-loader' }
                     ]
-                }),
+                })
             }]
         },
         plugins: [
@@ -147,10 +147,10 @@ exports.loadJS = function (paths) {
                     // It uses default OS directory by default. If you need
                     // something more custom, pass a path to it.
                     // I.e., { cacheDirectory: '<path>' }
-                    cacheDirectory: true,
-                },
-            }, ],
-        },
+                    cacheDirectory: true
+                }
+            }]
+        }
     };
 };
 
@@ -173,7 +173,7 @@ exports.minifyJavaScript = function ({useSourceMap}) {
                     warnings: true,
                     // Drop `console` statements
                     drop_console: false // true is better
-                },
+                }
             })
         ]
     };
@@ -190,8 +190,8 @@ exports.generateSourcemaps = function (type) {
 exports.clean = function (path) {
     return {
         plugins: [
-            new CleanWebpackPlugin([path]),
-        ],
+            new CleanWebpackPlugin(path)
+        ]
     };
 };
 

@@ -9,6 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const parts = require('./webpack.parts');
 
 const PATHS = {
+    root: path.resolve('./'),
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
     additions: {
@@ -44,41 +45,20 @@ module.exports = function (env) {
             },
             output: {
                 path: PATHS.build,
-                filename: '[hash].[name].js'
+                filename: '[name].[hash].js'
             },
             module: {
                 rules: [
                     {
-                        test: /\.(jpg|png)$/,
-                        loader: 'url-loader',
-                        options: {
-                            limit: 25000
-                        }
-                    },
-                    {
-                        // Better to use raw-loader for raw SVG
-                        test: /\.svg$/,
-                        use: 'file-loader'
-                    },
-                    {
-                        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                        loader: 'url-loader',
-                        options: {
-                            name: 'fonts/[hash].[ext]',
-                            limit: 5000,
-                            mimetype: 'application/font-woff'
-                        }
-                    },
-                    {
-                        test: /\.ttf$|\.eot$/,
-                        loader: 'file-loader',
-                        options: {
-                            name: 'fonts/[hash].[ext]'
-                        }
-                    },
-                    {
                         test: /\.html$/,
-                        loader: 'underscore-template-loader'
+                        loader: 'underscore-template-loader',
+                        query: {
+                            root: PATHS.root
+                        }
+                    },
+                    {
+                        test: /\.(jpg|png|svg)$/,
+                        use: 'file-loader?name=[path][name].[hash].[ext]'
                     }
                 ]
             },
@@ -121,17 +101,18 @@ module.exports = function (env) {
                     new webpack.optimize.CommonsChunkPlugin({
                         name: 'app',
                         chunks: ['app'],
-                        minChunks: isVendor,
+                        minChunks: isVendor
                     }),
                     new webpack.optimize.CommonsChunkPlugin({
                         name: 'vendor',
-                        minChunks: Infinity,
-                    }),
+                        minChunks: Infinity
+                    })
                 ]
             },
+            parts.clean(PATHS.build),
             parts.lintJS(),
             parts.lintCSS(),
-            parts.clean(PATHS.build),
+            parts.loadCSS(PATHS.app),
             parts.loadJS(PATHS.app),
             parts.minifyJavaScript({ useSourceMap: true }),
             parts.generateSourcemaps('source-map'),
