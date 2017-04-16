@@ -6,12 +6,14 @@
     "dev": "webpack-dev-server --progress --watch --env development"
   },
   "devDependencies": {
+    "autoprefixer": "^6.7.7",
     "babel-core": "6.24.1",
     "babel-loader": "7.0.0-beta",
     "babel-preset-env": "1.4.0",
     "babel-preset-es2015": "6.24.1",
     "clean-webpack-plugin": "0.1.15",
     "css-loader": "0.28.0",
+    "cssnano": "^3.10.0",
     "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.11.1",
     "html-webpack-plugin": "2.26.0",
