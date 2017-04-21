@@ -2,8 +2,10 @@
   "name": "webpack-config-sample-for-angular",
   "version": "1.0.0",
   "scripts": {
-    "prod": "webpack --env production",
-    "dev": "webpack-dev-server --progress --watch --env development"
+    "prod": "webpack --optimize-minimize --env production",
+    "qa": "webpack --env development",
+    "dev": "webpack --env sandbox",
+    "local": "webpack-dev-server --progress --watch --env local"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",

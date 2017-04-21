@@ -16,11 +16,11 @@ exports.devServer = function (options) {
 
             // Unlike the cli flag, this doesn't set
             // HotModuleReplacementPlugin!
-            hot: true,
+            hot: false,
 
             // Don't refresh if hot loading fails. If you want
             // refresh behavior, set inline: true instead.
-            hotOnly: true,
+            hotOnly: false,
 
             // Display only errors to reduce the amount of output.
             stats: 'errors-only',
@@ -38,10 +38,10 @@ exports.devServer = function (options) {
         plugins: [
             // Enable multi-pass compilation for enhanced performance
             // in larger projects. Good default.
-            new webpack.HotModuleReplacementPlugin({
+           /* new webpack.HotModuleReplacementPlugin({
                 // Disabled as this won't work with html-webpack-template yet
                 multiStep: true
-            }),
+            }),*/
             new webpack.WatchIgnorePlugin([
                 path.join(__dirname, 'node_modules')
             ])

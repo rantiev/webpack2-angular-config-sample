@@ -9,7 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const parts = require('./webpack.parts');
 
 const PATHS = {
-    root: path.resolve('./'),
+    root: path.resolve(__dirname),
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
     additions: {
@@ -34,6 +34,7 @@ module.exports = function (env) {
 
     const common = merge(
         {
+            context: path.resolve(__dirname),
             entry: {
                 app: PATHS.entry,
                 vendor: [
@@ -87,35 +88,36 @@ module.exports = function (env) {
                         GOOGLE_API_KEY: JSON.stringify(GOOGLE_API_KEY),
                         MAIN_MODULE_NAME: JSON.stringify(MAIN_MODULE_NAME)
                     }
+                }),
+                new webpack.optimize.CommonsChunkPlugin({
+                    name: 'vendor',
+                    filename: 'vendor.[hash].js'
                 })
             ]
         }
     );
 
-    if (env === 'production') {
+    if (IS_ENV_PROD) {
         return merge(
             common,
-            {
-                plugins:
-                [
-                    new webpack.optimize.CommonsChunkPlugin({
-                        name: 'app',
-                        chunks: ['app'],
-                        minChunks: isVendor
-                    }),
-                    new webpack.optimize.CommonsChunkPlugin({
-                        name: 'vendor',
-                        minChunks: Infinity
-                    })
-                ]
-            },
             parts.clean(PATHS.build),
             parts.lintJS(),
             parts.lintCSS(),
             parts.loadCSS(PATHS.app),
             parts.loadJS(PATHS.app),
-            parts.minifyJavaScript({ useSourceMap: true }),
-            parts.generateSourcemaps('source-map'),
+            parts.minifyJavaScript({useSourceMap: false}),
+            parts.extractCSS()
+        );
+    } else if (IS_ENV_QA || IS_ENV_DEV) {
+        return merge(
+            common,
+            parts.clean(PATHS.build),
+            parts.lintJS(),
+            parts.lintCSS(),
+            parts.loadCSS(PATHS.app),
+            parts.loadJS(PATHS.app),
+            parts.minifyJavaScript({useSourceMap: true}),
+            parts.generateSourcemaps('cheap-module-eval-source-map'),
             parts.extractCSS()
         );
     }
@@ -124,14 +126,12 @@ module.exports = function (env) {
         common,
         {
             performance: {
-                hints: false
-            },
-            plugins: [
-                new webpack.NamedModulesPlugin()
-            ]
+                hints: true
+            }
         },
         parts.loadCSS(PATHS.app),
         parts.loadJS(PATHS.app),
+        parts.generateSourcemaps('cheap-module-eval-source-map'),
         parts.devServer({
             host: process.env.HOST,
             port: process.env.PORT
