@@ -1,62 +1,49 @@
-(function() {
-    'use strict';
+require('./style.scss');
+require('./appVendors.js');
 
-    require('./style.scss');
+const moduleName = BUILD.MAIN_MODULE_NAME;
+const appDependencies = [
+    'ngResource',
+    'ui.router',
+];
 
-    require('angular');
-    require('angular-resource');
-    require('angular-ui-router');
+angular.module(moduleName, appDependencies).config(config);
 
-    /*require('../imgs/img.png');
-    require('../imgs/img.jpg');*/
+config.$inject = [
+    '$resourceProvider',
+];
 
-    const moduleName = BUILD.MAIN_MODULE_NAME;
+function config (
+    $resourceProvider,
+) {
+    $resourceProvider.defaults.stripTrailingSlashes = false;
+}
 
-    const appDependencies = [
-        'ngResource',
-        'ui.router'
-    ];
+require('./appConfig.js');
+require('./appRouting.js');
+require('./appRun.js');
 
-    angular
-        .module(moduleName, appDependencies)
-        .config(config);
+require('./appComponents.js');
 
-    config.$inject = [
-        '$resourceProvider'
-    ];
+angular.element(() => {
+    angular.bootstrap(document, [moduleName]);
+});
 
-    function config (
-        $resourceProvider
-    ) {
-        $resourceProvider.defaults.stripTrailingSlashes = false;
-    }
+/* const appVersion = BUILD.VERSION;
+const apiUrl = BUILD.API_URL;
+const googleId = BUILD.GOOGLE_ANALYTICS_ID;
+const googleAPIKey = BUILD.GOOGLE_API_KEY;
+const isProd = BUILD.IS_ENV_PROD;
+const isQA = BUILD.IS_ENV_QA;
+const isDev = BUILD.IS_ENV_DEV;
 
-    require('./appConfig.js');
-    require('./appRouting.js');
-    require('./appRun.js');
+const Informer = require('./components/informer/informer.js');*/
 
-    require('./components/mainMenu/mainMenu.js');
-
-    angular.element(function() {
-        angular.bootstrap(document, [moduleName]);
-    });
-
-    const appVersion = BUILD.VERSION;
-    const apiUrl = BUILD.API_URL;
-    const googleId = BUILD.GOOGLE_ANALYTICS_ID;
-    const googleAPIKey = BUILD.GOOGLE_API_KEY;
-    const isProd = BUILD.IS_ENV_PROD;
-    const isQA = BUILD.IS_ENV_QA;
-    const isDev = BUILD.IS_ENV_DEV;
-
-    const Informer = require('./components/informer/informer.js');
-
-    new Informer(`APP version is: ${appVersion}`);
-    new Informer(`API URL is: ${apiUrl}`);
-    new Informer(`Google ID is: ${googleId}`);
-    new Informer(`Google API KEY is: ${googleAPIKey}`);
-    new Informer(`Environment is production: ${isProd}`);
-    new Informer(`Environment is QA: ${isQA}`);
-    new Informer(`Environment is development: ${isDev}`);
-
-})();
+/*
+const inf1 = new Informer(`APP version is: ${appVersion}`);
+const inf2 = new Informer(`API URL is: ${apiUrl}`);
+const inf3 = new Informer(`Google ID is: ${googleId}`);
+const inf4 = new Informer(`Google API KEY is: ${googleAPIKey}`);
+const inf5 = new Informer(`Environment is production: ${isProd}`);
+const inf6 = new Informer(`Environment is QA: ${isQA}`);
+const inf7 = new Informer(`Environment is development: ${isDev}`);*/

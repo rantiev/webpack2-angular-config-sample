@@ -1,3 +1,4 @@
+const MAIN_MODULE_NAME = 'myApp';
 const APP_VERSION = '1.0.0';
 
 const ENVS = {
@@ -27,7 +28,7 @@ const buildCfg = {
         }
     },
     ANGULAR: {
-        MAIN_MODULE_NAME: 'myApp'
+        MAIN_MODULE_NAME
     }
 };
 

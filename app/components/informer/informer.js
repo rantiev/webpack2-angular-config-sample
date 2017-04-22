@@ -1,8 +1,6 @@
 require('./informer.scss');
 
 function Informer (text) {
-    "use strict";
-
     const information = document.createElement('div');
     information.className = 'information';
 

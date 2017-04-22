@@ -1,24 +1,19 @@
-(function () {
-    'use strict';
+angular
+    .module(BUILD.MAIN_MODULE_NAME)
+    .run(appRun);
 
-    angular
-        .module(BUILD.MAIN_MODULE_NAME)
-        .run(appRun);
+appRun.$inject = [
+    '$rootScope',
+];
 
-    appRun.$inject = [
-        '$rootScope'
-    ];
+function appRun (
+    $rootScope,
+) {
+   /* $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
 
-    function appRun (
-        $rootScope
-    ) {
-        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    });
 
-        });
-
-        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            $rootScope.currentState = toState;
-        });
-    }
-
-})();
+    $rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
+        $rootScope.currentState = toState;
+    });*/
+}
