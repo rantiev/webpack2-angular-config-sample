@@ -49,30 +49,21 @@ exports.devServer = function (options) {
     };
 };
 
-// We use this for linting CSS/SCSS/SASS + PostCSS
-exports.lintCSS = function (paths) {
-    return {
-        module: {
-            rules: [{
-                test: /\.scss$/,
-                include: paths,
-                use: 'postcss-loader',
-                enforce: 'pre'
-            }]
-        }
-    };
-};
-
 // We use this for loading CSS/SCSS/SASS + PostCSS
 exports.loadCSS = function (paths) {
     return {
         module: {
             rules: [{
                 test: /\.scss$/,
-                include: paths,
+                include: paths.app,
                 use: [
                     'style-loader',
-                    'css-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            root: paths.root
+                        }
+                    },
                     'postcss-loader',
                     'sass-loader'
                 ]
@@ -91,9 +82,11 @@ exports.extractCSS = function (paths) {
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: [
-                        { loader: 'css-loader', query: {sourceMap: true} },
-                        { loader: 'postcss-loader' },
-                        { loader: 'sass-loader' }
+                        {
+                            loader: 'css-loader'
+                        },
+                        'postcss-loader',
+                        'sass-loader'
                     ]
                 })
             }]
@@ -152,11 +145,6 @@ exports.loadJS = function (paths) {
             }]
         }
     };
-};
-
-// TODO: Add eslint parse JS
-exports.lintJS = function (paths) {
-
 };
 
 // Minify JS

@@ -10,6 +10,7 @@ const parts = require('./webpack.parts');
 
 const PATHS = {
     root: path.resolve(__dirname),
+    app: path.resolve(__dirname, 'app'),
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
     additions: {
@@ -53,13 +54,13 @@ module.exports = function (env) {
                     {
                         test: /\.html$/,
                         loader: 'underscore-template-loader',
-                        query: {
+                        options: {
                             root: PATHS.root
                         }
                     },
                     {
                         test: /\.(jpg|png|svg)$/,
-                        use: 'file-loader?name=[path][name].[hash].[ext]'
+                        loader: 'file-loader?name=[path][name].[hash].[ext]'
                     }
                 ]
             },
@@ -73,9 +74,7 @@ module.exports = function (env) {
                         removeComments: true,
                         collapseWhitespace: true
                     } : false,
-                    favicon: 'imgs/favicon.ico',
-                    analytics: false,
-                    buildMode: 'prod'
+                    favicon: 'imgs/favicon.ico'
                 }),
                 new webpack.DefinePlugin({
                     BUILD: {
@@ -101,9 +100,7 @@ module.exports = function (env) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.lintJS(),
-            parts.lintCSS(),
-            parts.loadCSS(PATHS.app),
+            parts.loadCSS(PATHS),
             parts.loadJS(PATHS.app),
             parts.minifyJavaScript({useSourceMap: false}),
             parts.extractCSS()
@@ -112,13 +109,11 @@ module.exports = function (env) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.lintJS(),
-            parts.lintCSS(),
-            parts.loadCSS(PATHS.app),
+            parts.loadCSS(PATHS),
             parts.loadJS(PATHS.app),
             parts.minifyJavaScript({useSourceMap: true}),
             parts.generateSourcemaps('cheap-module-eval-source-map'),
-            parts.extractCSS()
+            parts.extractCSS(PATHS.app)
         );
     }
 
@@ -129,7 +124,7 @@ module.exports = function (env) {
                 hints: true
             }
         },
-        parts.loadCSS(PATHS.app),
+        parts.loadCSS(PATHS),
         parts.loadJS(PATHS.app),
         parts.generateSourcemaps('cheap-module-eval-source-map'),
         parts.devServer({
@@ -138,13 +133,3 @@ module.exports = function (env) {
         })
     );
 };
-
-function isVendor(module, count) {
-  const userRequest = module.userRequest;
-
-  if (typeof userRequest !== 'string') {
-    return false;
-  }
-
-  return userRequest && userRequest.indexOf('node_modules') >= 0;
-}
