@@ -11,6 +11,7 @@ const parts = require('./webpack.parts');
 const PATHS = {
     root: path.resolve(__dirname),
     app: path.resolve(__dirname, 'app'),
+    imgs: path.resolve(__dirname, 'imgs'),
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
     additions: {
@@ -52,11 +53,35 @@ module.exports = function (env) {
             module: {
                 rules: [
                     {
+                        test: /\.js$/,
+                        include: PATHS.app,
+                        exclude: /node_modules/,
+                        loader: 'babel-loader',
+                        options: {
+                            cacheDirectory: true
+                        }
+                    },
+                    {
                         test: /\.html$/,
                         loader: 'underscore-template-loader',
                         options: {
                             root: PATHS.root
                         }
+                    },
+                    {
+                        test: /\.scss$/,
+                        include: PATHS.app,
+                        use: [
+                            'style-loader',
+                            {
+                                loader: 'css-loader',
+                                options: {
+                                    root: PATHS.root
+                                }
+                            },
+                            'postcss-loader',
+                            'sass-loader'
+                        ]
                     },
                     {
                         test: /\.(jpg|png|svg)$/,
@@ -100,20 +125,16 @@ module.exports = function (env) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.loadCSS(PATHS),
-            parts.loadJS(PATHS.app),
             parts.minifyJavaScript({useSourceMap: false}),
-            parts.extractCSS()
+            parts.extractCSS(PATHS)
         );
     } else if (IS_ENV_QA || IS_ENV_DEV) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.loadCSS(PATHS),
-            parts.loadJS(PATHS.app),
             parts.minifyJavaScript({useSourceMap: true}),
             parts.generateSourcemaps('cheap-module-eval-source-map'),
-            parts.extractCSS(PATHS.app)
+            parts.extractCSS(PATHS)
         );
     }
 
@@ -124,8 +145,6 @@ module.exports = function (env) {
                 hints: true
             }
         },
-        parts.loadCSS(PATHS),
-        parts.loadJS(PATHS.app),
         parts.generateSourcemaps('cheap-module-eval-source-map'),
         parts.devServer({
             host: process.env.HOST,

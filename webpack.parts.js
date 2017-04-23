@@ -49,51 +49,30 @@ exports.devServer = function (options) {
     };
 };
 
-// We use this for loading CSS/SCSS/SASS + PostCSS
-exports.loadCSS = function (paths) {
-    return {
-        module: {
-            rules: [{
-                test: /\.scss$/,
-                include: paths.app,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            root: paths.root
-                        }
-                    },
-                    'postcss-loader',
-                    'sass-loader'
-                ]
-            }]
-        }
-    };
-};
-
 // We use this for extracting CSS
 exports.extractCSS = function (paths) {
     return {
         module: {
-            rules: [{
-                test: /\.scss$/,
-                include: paths,
-                use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: [
+            rules: [
+                {
+                    test: /\.scss$/,
+                    include: paths.app,
+                    use: ExtractTextPlugin.extract(
                         {
-                            loader: 'css-loader'
-                        },
-                        'postcss-loader',
-                        'sass-loader'
-                    ]
-                })
-            }]
+                            fallback: 'style-loader',
+                            use: [
+                                'css-loader',
+                                'postcss-loader',
+                                'sass-loader'
+                            ]
+                        }
+                    )
+                }
+            ]
         },
         plugins: [
             new ExtractTextPlugin({
-                filename: '[chunkhash].[name].css',
+                filename: '[name].[hash].css',
                 disable: false,
                 allChunks: true
             })
@@ -124,28 +103,6 @@ exports.purifyCSS = function (paths) {
         ]
     };
 };*/
-
-// Load JS
-exports.loadJS = function (paths) {
-    return {
-        module: {
-            rules: [{
-                test: /\.js$/,
-                include: paths,
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-                options: {
-                    // Enable caching for improved performance during
-                    // development.
-                    // It uses default OS directory by default. If you need
-                    // something more custom, pass a path to it.
-                    // I.e., { cacheDirectory: '<path>' }
-                    cacheDirectory: true
-                }
-            }]
-        }
-    };
-};
 
 // Minify JS
 exports.minifyJavaScript = function ({useSourceMap}) {
