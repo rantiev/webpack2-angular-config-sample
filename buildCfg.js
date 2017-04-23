@@ -4,7 +4,8 @@ const APP_VERSION = '1.0.0';
 const ENVS = {
     PROD: 'production',
     QA: 'development',
-    DEV: 'sandbox'
+    DEV: 'sandbox',
+    LOCAL: 'local'
 };
 
 const buildCfg = {
@@ -13,18 +14,21 @@ const buildCfg = {
     API_URL: {
         [ENVS.PROD]: 'http://production.hostname.com/api',
         [ENVS.QA]: 'http://development.hostname.com/api',
-        [ENVS.DEV]: 'http://sandbox.hostname.com/api'
+        [ENVS.DEV]: 'http://sandbox.hostname.com/api',
+        [ENVS.LOCAL]: 'http://local.hostname.com/api',
     },
     GOOGLE: {
         API_KEY: {
             [ENVS.PROD]: 'googleAPIKeyProduction',
             [ENVS.QA]: 'googleAPIKeyDevelopment',
-            [ENVS.DEV]: 'googleAPIKeySandbox'
+            [ENVS.DEV]: 'googleAPIKeySandbox',
+            [ENVS.LOCAL]: 'googleAPIKeyLocal',
         },
         ANALYTICS_ID: {
             [ENVS.PROD]: 'googleIdProduction',
             [ENVS.QA]: 'googleIdDevelopment',
-            [ENVS.DEV]: 'googleIdSandbox'
+            [ENVS.DEV]: 'googleIdSandbox',
+            [ENVS.LOCAL]: 'googleIdLocal',
         }
     },
     ANGULAR: {

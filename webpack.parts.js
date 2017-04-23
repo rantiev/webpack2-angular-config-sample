@@ -2,8 +2,9 @@ const webpack = require('webpack');
 const path = require('path');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-//const PurifyCSSPlugin = require('purifycss-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
 
 // We use this to config HMR for WDS
 exports.devServer = function (options) {
@@ -72,37 +73,13 @@ exports.extractCSS = function (paths) {
         },
         plugins: [
             new ExtractTextPlugin({
-                filename: '[name].[hash].css',
+                filename: '[name].[chunkhash].css',
                 disable: false,
                 allChunks: true
             })
         ]
     };
 };
-
-/*// We use this for purifying CSS
-exports.purifyCSS = function (paths) {
-    paths = Array.isArray(paths) ? paths : [paths];
-
-    return {
-        plugins: [
-            new PurifyCSSPlugin({
-                // Our paths are absolute so Purify needs patching
-                // against that to work.
-                basePath: '/',
-
-                // `paths` is used to point PurifyCSS to files not
-                // visible to Webpack. This expects glob patterns so
-                // we adapt here.
-                paths: paths.map(path => `${path}`),
-
-                // Walk through only html files within node_modules. It
-                // picks up .js files by default!
-                resolveExtensions: ['.html']
-            })
-        ]
-    };
-};*/
 
 // Minify JS
 exports.minifyJavaScript = function ({useSourceMap}) {
@@ -140,33 +117,18 @@ exports.clean = function (path) {
     };
 };
 
-// Create Chunk Bundles FIX - // http://survivejs.com/webpack/building-with-webpack/splitting-bundles/
-exports.extractBundles = function (bundles, options) {
-    const entry = {};
-    const names = [];
-
-    // Set up entries and names.
-    bundles.forEach(({
-        name,
-        entries
-    }) => {
-        if (entries) {
-            entry[name] = entries;
-        }
-
-        names.push(name);
-    });
-
+exports.moveVendors = function () {
     return {
-        // Define an entry point needed for splitting.
-        entry,
         plugins: [
-            // Extract bundles.
-            new webpack.optimize.CommonsChunkPlugin(
-                Object.assign({}, options, {
-                    names
-                })
-            )
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'manifest'
+            }),
+            new webpack.HashedModuleIdsPlugin(),
+            new WebpackChunkHash(),
+            new ChunkManifestPlugin({
+                filename: "chunk-manifest.json",
+                manifestVariable: "webpackManifest"
+            })
         ]
-    };
+    }
 };

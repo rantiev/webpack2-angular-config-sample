@@ -30,25 +30,24 @@ module.exports = function (env) {
     const IS_ENV_PROD = env === buildCfg.ENVS.PROD;
     const IS_ENV_QA = env === buildCfg.ENVS.QA;
     const IS_ENV_DEV = env === buildCfg.ENVS.DEV;
+    const IS_ENV_LOCAL = !env || env === buildCfg.ENVS.LOCAL;
+
     const API_URL = buildCfg.API_URL[env];
     const GOOGLE_ANALYTICS_ID = buildCfg.GOOGLE.ANALYTICS_ID[env];
     const GOOGLE_API_KEY = buildCfg.GOOGLE.API_KEY[env];
+
+    const fileNameScheme = !IS_ENV_LOCAL ? '[name].[chunkhash]' : '[name]';
+    const imagesNameScheme = !IS_ENV_LOCAL ? '[name].[hash]' : '[name]';
 
     const common = merge(
         {
             context: path.resolve(__dirname),
             entry: {
-                app: PATHS.entry,
-                vendor: [
-                    'angular',
-                    'angular-resource',
-                    'angular-ui-router',
-                    'lodash'
-                ]
+                app: PATHS.entry
             },
             output: {
                 path: PATHS.build,
-                filename: '[name].[hash].js'
+                filename: fileNameScheme + '.js'
             },
             module: {
                 rules: [
@@ -85,7 +84,7 @@ module.exports = function (env) {
                     },
                     {
                         test: /\.(jpg|png|svg)$/,
-                        loader: 'file-loader?name=[path][name].[hash].[ext]'
+                        loader: 'file-loader?name=[path]' + imagesNameScheme + '.[ext]'
                     }
                 ]
             },
@@ -115,8 +114,10 @@ module.exports = function (env) {
                 }),
                 new webpack.optimize.CommonsChunkPlugin({
                     name: 'vendor',
-                    filename: 'vendor.[hash].js'
-                })
+                    minChunks: function (module) {
+                        return module.context && module.context.indexOf('node_modules') !== -1;
+                    }
+                }),
             ]
         }
     );
@@ -126,7 +127,8 @@ module.exports = function (env) {
             common,
             parts.clean(PATHS.build),
             parts.minifyJavaScript({useSourceMap: false}),
-            parts.extractCSS(PATHS)
+            parts.extractCSS(PATHS),
+            parts.moveVendors()
         );
     } else if (IS_ENV_QA || IS_ENV_DEV) {
         return merge(
@@ -134,7 +136,8 @@ module.exports = function (env) {
             parts.clean(PATHS.build),
             parts.minifyJavaScript({useSourceMap: true}),
             parts.generateSourcemaps('cheap-module-eval-source-map'),
-            parts.extractCSS(PATHS)
+            parts.extractCSS(PATHS),
+            parts.moveVendors()
         );
     }
 
@@ -142,7 +145,7 @@ module.exports = function (env) {
         common,
         {
             performance: {
-                hints: true
+                hints: false
             }
         },
         parts.generateSourcemaps('cheap-module-eval-source-map'),
