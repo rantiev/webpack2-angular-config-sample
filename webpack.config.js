@@ -90,7 +90,7 @@ module.exports = function (env) {
             },
             plugins: [
                 new HtmlWebpackPlugin({
-                    title: 'MY APP',
+                    title: buildCfg.ANGULAR.MAIN_MODULE_NAME,
                     filename: 'index.html',
                     template: './tpl/index.html',
                     inject: 'body',
@@ -117,7 +117,7 @@ module.exports = function (env) {
                     minChunks: function (module) {
                         return module.context && module.context.indexOf('node_modules') !== -1;
                     }
-                }),
+                })
             ]
         }
     );
@@ -128,7 +128,8 @@ module.exports = function (env) {
             parts.clean(PATHS.build),
             parts.minifyJavaScript({useSourceMap: false}),
             parts.extractCSS(PATHS),
-            parts.moveVendors()
+            parts.moveVendors(),
+            parts.banner(buildCfg)
         );
     } else if (IS_ENV_QA || IS_ENV_DEV) {
         return merge(
@@ -137,7 +138,8 @@ module.exports = function (env) {
             parts.minifyJavaScript({useSourceMap: true}),
             parts.generateSourcemaps('cheap-module-eval-source-map'),
             parts.extractCSS(PATHS),
-            parts.moveVendors()
+            parts.moveVendors(),
+            parts.banner(buildCfg)
         );
     }
 
@@ -153,5 +155,6 @@ module.exports = function (env) {
             host: process.env.HOST,
             port: process.env.PORT
         })
+        //,parts.analyzer()
     );
 };

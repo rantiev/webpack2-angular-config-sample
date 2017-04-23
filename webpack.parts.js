@@ -5,6 +5,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 const WebpackChunkHash = require('webpack-chunk-hash');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 // We use this to config HMR for WDS
 exports.devServer = function (options) {
@@ -131,4 +133,23 @@ exports.moveVendors = function () {
             })
         ]
     }
+};
+
+exports.banner = function (cfg) {
+    return {
+        plugins: [
+            new webpack.BannerPlugin({
+                banner: cfg.ANGULAR.MAIN_MODULE_NAME + ' ' + cfg.APP_VERSION,
+                entryOnly: true
+            })
+        ]
+    }
+};
+
+exports.analyzer = function () {
+    return {
+        plugins: [
+            new BundleAnalyzerPlugin()
+        ]
+    };
 };

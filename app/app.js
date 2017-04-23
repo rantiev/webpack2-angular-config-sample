@@ -5,18 +5,31 @@ const moduleName = BUILD.MAIN_MODULE_NAME;
 const appDependencies = [
     'ngResource',
     'ui.router',
+    'pascalprecht.translate',
+    'tmh.dynamicLocale',
 ];
 
 angular.module(moduleName, appDependencies).config(config);
 
 config.$inject = [
     '$resourceProvider',
+    '$translateProvider',
 ];
 
 function config (
     $resourceProvider,
+    $translateProvider,
 ) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
+
+    $translateProvider
+        .useSanitizeValueStrategy('escapeParameters')
+        .useStaticFilesLoader({
+            prefix: 'app/translation/locale-',
+            suffix: '.json',
+        })
+        .preferredLanguage('en_GB')
+        .fallbackLanguage('en_GB');
 }
 
 require('./appConfig.js');
