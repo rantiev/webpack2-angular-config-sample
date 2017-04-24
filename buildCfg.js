@@ -1,4 +1,4 @@
-var packageJson = require('./package.json');
+const packageJson = require('./package.json');
 
 const MAIN_MODULE_NAME = 'myApp';
 const APP_VERSION = packageJson.version;
@@ -7,7 +7,7 @@ const ENVS = {
     PROD: 'production',
     QA: 'development',
     DEV: 'sandbox',
-    LOCAL: 'local'
+    LOCAL: 'local',
 };
 
 const buildCfg = {
@@ -31,11 +31,11 @@ const buildCfg = {
             [ENVS.QA]: 'googleIdDevelopment',
             [ENVS.DEV]: 'googleIdSandbox',
             [ENVS.LOCAL]: 'googleIdLocal',
-        }
+        },
     },
     ANGULAR: {
-        MAIN_MODULE_NAME
-    }
+        MAIN_MODULE_NAME,
+    },
 };
 
 module.exports = buildCfg;

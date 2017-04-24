@@ -14,12 +14,14 @@ const PATHS = {
     imgs: path.resolve(__dirname, 'imgs'),
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
+    translations: path.resolve(__dirname, 'app/translation'),
     additions: {
         ga: './include/analytics/google/ga.js',
     },
 };
 
 const buildCfg = require('./buildCfg.js');
+const TIMESTAMP = Date.now();
 
 module.exports = function (env) {
     env && _.values(buildCfg.ENVS).indexOf(env) !== -1 || (env = 'development');
@@ -106,10 +108,12 @@ module.exports = function (env) {
                         IS_ENV_PROD,
                         IS_ENV_QA,
                         IS_ENV_DEV,
+                        IS_ENV_LOCAL,
                         API_URL: JSON.stringify(API_URL),
                         GOOGLE_ANALYTICS_ID: JSON.stringify(GOOGLE_ANALYTICS_ID),
                         GOOGLE_API_KEY: JSON.stringify(GOOGLE_API_KEY),
                         MAIN_MODULE_NAME: JSON.stringify(MAIN_MODULE_NAME),
+                        TIMESTAMP: JSON.stringify(TIMESTAMP),
                     },
                 }),
                 new webpack.optimize.CommonsChunkPlugin({
@@ -129,6 +133,7 @@ module.exports = function (env) {
             parts.imgsMinified(imagesNameScheme),
             parts.minifyJavaScript({ useSourceMap: false }),
             parts.extractCSS(PATHS),
+            parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
             parts.banner(buildCfg)
         );
@@ -140,6 +145,7 @@ module.exports = function (env) {
             parts.minifyJavaScript({ useSourceMap: true }),
             parts.generateSourcemaps('cheap-module-eval-source-map'),
             parts.extractCSS(PATHS),
+            parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
             parts.banner(buildCfg)
         );

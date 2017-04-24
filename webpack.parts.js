@@ -6,10 +6,25 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 const WebpackChunkHash = require('webpack-chunk-hash');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+module.exports = {
+    devServer,
+    extractCSS,
+    minifyJavaScript,
+    generateSourcemaps,
+    clean,
+    moveVendors,
+    banner,
+    analyzer,
+    json,
+    extractJSON,
+    copyJSON,
+    imgs,
+    imgsMinified,
+};
 
-// We use this to config HMR for WDS
-module.exports.devServer = function (options) {
+function devServer (options) {
     return {
         devServer: {
             // Enable history API fallback so HTML5 History API based
@@ -52,8 +67,7 @@ module.exports.devServer = function (options) {
     };
 };
 
-// We use this for extracting CSS
-module.exports.extractCSS = function (paths) {
+function extractCSS (paths) {
     return {
         module: {
             rules: [
@@ -83,8 +97,7 @@ module.exports.extractCSS = function (paths) {
     };
 };
 
-// Minify JS
-module.exports.minifyJavaScript = function ({ useSourceMap }) {
+function minifyJavaScript ({ useSourceMap }) {
     return {
         plugins: [
             new webpack.optimize.UglifyJsPlugin({
@@ -103,15 +116,13 @@ module.exports.minifyJavaScript = function ({ useSourceMap }) {
     };
 };
 
-// Enable Sourcemaps
-module.exports.generateSourcemaps = function generateSourcemaps (type) {
+function generateSourcemaps (type) {
     return {
         devtool: type,
     };
 };
 
-// Clean build
-module.exports.clean = function clean (path) {
+function clean (path) {
     return {
         plugins: [
             new CleanWebpackPlugin(path),
@@ -119,7 +130,7 @@ module.exports.clean = function clean (path) {
     };
 };
 
-module.exports.moveVendors = function moveVendors () {
+function moveVendors () {
     return {
         plugins: [
             new webpack.optimize.CommonsChunkPlugin({
@@ -135,7 +146,7 @@ module.exports.moveVendors = function moveVendors () {
     };
 };
 
-module.exports.banner = function banner (cfg) {
+function banner (cfg) {
     return {
         plugins: [
             new webpack.BannerPlugin({
@@ -146,7 +157,7 @@ module.exports.banner = function banner (cfg) {
     };
 };
 
-module.exports.analyzer = function analyzer () {
+function analyzer () {
     return {
         plugins: [
             new BundleAnalyzerPlugin(),
@@ -154,7 +165,59 @@ module.exports.analyzer = function analyzer () {
     };
 };
 
-module.exports.imgs = function imgs (imagesNameScheme) {
+function json () {
+    return {
+        module: {
+            rules: [
+                {
+                    test: /\.json$/,
+                    loader: 'json-loader?name=[path][name].[ext]',
+                },
+            ],
+        },
+    };
+};
+
+function extractJSON (path) {
+    return {
+        module: {
+            rules: [
+                {
+                    test: /\.json/,
+                    include: path,
+                    use: ExtractTextPlugin.extract(
+                        {
+                            fallback: 'json-loader',
+                            use: [
+                                'json-loader',
+                            ],
+                        }
+                    ),
+                },
+            ],
+        },
+        plugins: [
+            new ExtractTextPlugin({
+                filename: '[path][name].json',
+                disable: false,
+                allChunks: true,
+            }),
+        ],
+    };
+};
+
+function copyJSON (path, timestamp) {
+    return {
+        plugins: [
+            new CopyWebpackPlugin([{
+                from: path,
+                to: `translation/[name].${timestamp}.[ext]`,
+            }]),
+        ],
+    };
+};
+
+function imgs (imagesNameScheme) {
     return {
         module: {
             rules: [
@@ -167,7 +230,7 @@ module.exports.imgs = function imgs (imagesNameScheme) {
     };
 };
 
-module.exports.imgsMinified = function imgsMinified (imagesNameScheme) {
+function imgsMinified (imagesNameScheme) {
     return {
         module: {
             rules: [

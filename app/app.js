@@ -2,6 +2,7 @@ require('./style.scss');
 require('./appVendors.js');
 
 const moduleName = BUILD.MAIN_MODULE_NAME;
+
 const appDependencies = [
     'ngResource',
     'ui.router',
@@ -9,7 +10,9 @@ const appDependencies = [
     'tmh.dynamicLocale',
 ];
 
-angular.module(moduleName, appDependencies).config(config);
+angular
+    .module(moduleName, appDependencies)
+    .config(config);
 
 function config (
     $resourceProvider,
@@ -20,8 +23,8 @@ function config (
     $translateProvider
         .useSanitizeValueStrategy('escapeParameters')
         .useStaticFilesLoader({
-            prefix: 'app/translation/locale-',
-            suffix: '.json',
+            prefix: `${BUILD.IS_ENV_LOCAL ? 'app/' : ''}translation/locale-`,
+            suffix: `${BUILD.IS_ENV_LOCAL ? '' : `.${BUILD.TIMESTAMP}`}.json`,
         })
         .preferredLanguage('en_GB')
         .fallbackLanguage('en_GB');
