@@ -9,7 +9,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 
 // We use this to config HMR for WDS
-exports.devServer = function (options) {
+module.exports.devServer = function (options) {
     return {
         devServer: {
             // Enable history API fallback so HTML5 History API based
@@ -36,7 +36,7 @@ exports.devServer = function (options) {
             // 0.0.0.0 is available to all network devices
             // unlike default `localhost`.
             host: options.host, // Defaults to `localhost`
-            port: options.port // Defaults to 8080
+            port: options.port, // Defaults to 8080
         },
         plugins: [
             // Enable multi-pass compilation for enhanced performance
@@ -46,14 +46,14 @@ exports.devServer = function (options) {
                 multiStep: true
             }),*/
             new webpack.WatchIgnorePlugin([
-                path.join(__dirname, 'node_modules')
-            ])
-        ]
+                path.join(__dirname, 'node_modules'),
+            ]),
+        ],
     };
 };
 
 // We use this for extracting CSS
-exports.extractCSS = function (paths) {
+module.exports.extractCSS = function (paths) {
     return {
         module: {
             rules: [
@@ -66,25 +66,25 @@ exports.extractCSS = function (paths) {
                             use: [
                                 'css-loader',
                                 'postcss-loader',
-                                'sass-loader'
-                            ]
+                                'sass-loader',
+                            ],
                         }
-                    )
-                }
-            ]
+                    ),
+                },
+            ],
         },
         plugins: [
             new ExtractTextPlugin({
                 filename: '[name].[chunkhash].css',
                 disable: false,
-                allChunks: true
-            })
-        ]
+                allChunks: true,
+            }),
+        ],
     };
 };
 
 // Minify JS
-exports.minifyJavaScript = function ({useSourceMap}) {
+module.exports.minifyJavaScript = function ({ useSourceMap }) {
     return {
         plugins: [
             new webpack.optimize.UglifyJsPlugin({
@@ -96,60 +96,114 @@ exports.minifyJavaScript = function ({useSourceMap}) {
                 compress: {
                     warnings: true,
                     // Drop `console` statements
-                    drop_console: false // true is better
-                }
-            })
-        ]
+                    drop_console: false, // true is better
+                },
+            }),
+        ],
     };
 };
 
 // Enable Sourcemaps
-exports.generateSourcemaps = function (type) {
+module.exports.generateSourcemaps = function generateSourcemaps (type) {
     return {
-        devtool: type
+        devtool: type,
     };
 };
 
 // Clean build
-exports.clean = function (path) {
+module.exports.clean = function clean (path) {
     return {
         plugins: [
-            new CleanWebpackPlugin(path)
-        ]
+            new CleanWebpackPlugin(path),
+        ],
     };
 };
 
-exports.moveVendors = function () {
+module.exports.moveVendors = function moveVendors () {
     return {
         plugins: [
             new webpack.optimize.CommonsChunkPlugin({
-                name: 'manifest'
+                name: 'manifest',
             }),
             new webpack.HashedModuleIdsPlugin(),
             new WebpackChunkHash(),
             new ChunkManifestPlugin({
-                filename: "chunk-manifest.json",
-                manifestVariable: "webpackManifest"
-            })
-        ]
-    }
+                filename: 'chunk-manifest.json',
+                manifestVariable: 'webpackManifest',
+            }),
+        ],
+    };
 };
 
-exports.banner = function (cfg) {
+module.exports.banner = function banner (cfg) {
     return {
         plugins: [
             new webpack.BannerPlugin({
                 banner: cfg.ANGULAR.MAIN_MODULE_NAME + ' ' + cfg.APP_VERSION,
-                entryOnly: true
-            })
-        ]
-    }
+                entryOnly: true,
+            }),
+        ],
+    };
 };
 
-exports.analyzer = function () {
+module.exports.analyzer = function analyzer () {
     return {
         plugins: [
-            new BundleAnalyzerPlugin()
-        ]
+            new BundleAnalyzerPlugin(),
+        ],
+    };
+};
+
+module.exports.imgs = function imgs (imagesNameScheme) {
+    return {
+        module: {
+            rules: [
+                {
+                    test: /\.(jpg|png|svg)$/,
+                    loader: `file-loader?name=[path]${imagesNameScheme}.[ext]`,
+                },
+            ],
+        },
+    };
+};
+
+module.exports.imgsMinified = function imgsMinified (imagesNameScheme) {
+    return {
+        module: {
+            rules: [
+                {
+                    test: /\.(jpg|png|svg)$/,
+                    use: [
+                        `file-loader?name=[path]${imagesNameScheme}.[ext]`,
+                        'image-webpack-loader?bypassOnDebug&optimizationLevel=7',
+                    ],
+                },
+            ],
+        },
+        /*plugins: [
+            new webpack.LoaderOptionsPlugin({
+                options: {
+                    imageWebpackLoader: {
+                        mozjpeg: {
+                            quality: 65,
+                        },
+                        pngquant: {
+                            quality: '65-90',
+                            speed: 4,
+                        },
+                        svgo: {
+                            plugins: [
+                                {
+                                    removeViewBox: false,
+                                },
+                                {
+                                    removeEmptyAttrs: false,
+                                },
+                            ],
+                        },
+                    },
+                },
+            }),
+        ],*/
     };
 };

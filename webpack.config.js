@@ -15,15 +15,14 @@ const PATHS = {
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
     additions: {
-        ga: './include/analytics/google/ga.js'
-    }
+        ga: './include/analytics/google/ga.js',
+    },
 };
 
 const buildCfg = require('./buildCfg.js');
 
 module.exports = function (env) {
-
-    env && _.values(buildCfg.ENVS).indexOf(env) !== - 1 || (env = 'development');
+    env && _.values(buildCfg.ENVS).indexOf(env) !== -1 || (env = 'development');
 
     const VERSION = buildCfg.APP_VERSION;
     const MAIN_MODULE_NAME = buildCfg.ANGULAR.MAIN_MODULE_NAME;
@@ -43,11 +42,11 @@ module.exports = function (env) {
         {
             context: path.resolve(__dirname),
             entry: {
-                app: PATHS.entry
+                app: PATHS.entry,
             },
             output: {
                 path: PATHS.build,
-                filename: fileNameScheme + '.js'
+                filename: `${fileNameScheme}.js`,
             },
             module: {
                 rules: [
@@ -57,15 +56,15 @@ module.exports = function (env) {
                         exclude: /node_modules/,
                         loader: 'babel-loader',
                         options: {
-                            cacheDirectory: true
-                        }
+                            cacheDirectory: true,
+                        },
                     },
                     {
                         test: /\.html$/,
                         loader: 'underscore-template-loader',
                         options: {
-                            root: PATHS.root
-                        }
+                            root: PATHS.root,
+                        },
                     },
                     {
                         test: /\.scss$/,
@@ -75,18 +74,14 @@ module.exports = function (env) {
                             {
                                 loader: 'css-loader',
                                 options: {
-                                    root: PATHS.root
-                                }
+                                    root: PATHS.root,
+                                },
                             },
                             'postcss-loader',
-                            'sass-loader'
-                        ]
+                            'sass-loader',
+                        ],
                     },
-                    {
-                        test: /\.(jpg|png|svg)$/,
-                        loader: 'file-loader?name=[path]' + imagesNameScheme + '.[ext]'
-                    }
-                ]
+                ],
             },
             plugins: [
                 new HtmlWebpackPlugin({
@@ -96,29 +91,29 @@ module.exports = function (env) {
                     inject: 'body',
                     minify: IS_ENV_PROD ? {
                         removeComments: true,
-                        collapseWhitespace: true
+                        collapseWhitespace: true,
                     } : false,
-                    favicon: 'imgs/favicon.ico'
+                    favicon: 'imgs/favicon.ico',
                 }),
                 new webpack.DefinePlugin({
                     BUILD: {
                         VERSION: JSON.stringify(VERSION),
-                        IS_ENV_PROD: IS_ENV_PROD,
-                        IS_ENV_QA: IS_ENV_QA,
-                        IS_ENV_DEV: IS_ENV_DEV,
+                        IS_ENV_PROD,
+                        IS_ENV_QA,
+                        IS_ENV_DEV,
                         API_URL: JSON.stringify(API_URL),
                         GOOGLE_ANALYTICS_ID: JSON.stringify(GOOGLE_ANALYTICS_ID),
                         GOOGLE_API_KEY: JSON.stringify(GOOGLE_API_KEY),
-                        MAIN_MODULE_NAME: JSON.stringify(MAIN_MODULE_NAME)
-                    }
+                        MAIN_MODULE_NAME: JSON.stringify(MAIN_MODULE_NAME),
+                    },
                 }),
                 new webpack.optimize.CommonsChunkPlugin({
                     name: 'vendor',
-                    minChunks: function (module) {
+                    minChunks: function minChunks (module) {
                         return module.context && module.context.indexOf('node_modules') !== -1;
-                    }
-                })
-            ]
+                    },
+                }),
+            ],
         }
     );
 
@@ -126,7 +121,8 @@ module.exports = function (env) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.minifyJavaScript({useSourceMap: false}),
+            parts.imgsMinified(imagesNameScheme),
+            parts.minifyJavaScript({ useSourceMap: false }),
             parts.extractCSS(PATHS),
             parts.moveVendors(),
             parts.banner(buildCfg)
@@ -135,7 +131,8 @@ module.exports = function (env) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.minifyJavaScript({useSourceMap: true}),
+            parts.imgsMinified(imagesNameScheme),
+            parts.minifyJavaScript({ useSourceMap: true }),
             parts.generateSourcemaps('cheap-module-eval-source-map'),
             parts.extractCSS(PATHS),
             parts.moveVendors(),
@@ -145,16 +142,17 @@ module.exports = function (env) {
 
     return merge(
         common,
+        parts.imgs(imagesNameScheme),
         {
             performance: {
-                hints: false
-            }
+                hints: false,
+            },
         },
         parts.generateSourcemaps('cheap-module-eval-source-map'),
         parts.devServer({
             host: process.env.HOST,
-            port: process.env.PORT
+            port: process.env.PORT,
         })
-        //,parts.analyzer()
+        // ,parts.analyzer()
     );
 };
