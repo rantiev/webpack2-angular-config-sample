@@ -5,12 +5,6 @@ angular
     .module(BUILD.MAIN_MODULE_NAME)
     .config(config);
 
-config.$inject = [
-    '$locationProvider',
-    '$stateProvider',
-    '$urlRouterProvider',
-];
-
 function config (
     $locationProvider,
     $stateProvider,

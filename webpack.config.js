@@ -54,10 +54,15 @@ module.exports = function (env) {
                         test: /\.js$/,
                         include: PATHS.app,
                         exclude: /node_modules/,
-                        loader: 'babel-loader',
-                        options: {
-                            cacheDirectory: true,
-                        },
+                        use: [
+                            'ng-annotate-loader',
+                            {
+                                loader: 'babel-loader',
+                                options: {
+                                    cacheDirectory: true,
+                                },
+                            },
+                        ],
                     },
                     {
                         test: /\.html$/,

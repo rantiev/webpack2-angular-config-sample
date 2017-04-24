@@ -4,11 +4,6 @@ angular
     .module(BUILD.MAIN_MODULE_NAME)
     .controller('HomeController', HomeController);
 
-HomeController.$inject = [
-    '$scope',
-    '$translate',
-];
-
 function HomeController (
     $scope,
     $translate,

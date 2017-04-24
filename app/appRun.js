@@ -2,10 +2,6 @@ angular
     .module(BUILD.MAIN_MODULE_NAME)
     .run(appRun);
 
-appRun.$inject = [
-    '$rootScope',
-];
-
 function appRun (
     $rootScope,
 ) {

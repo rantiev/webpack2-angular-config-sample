@@ -11,11 +11,6 @@ const appDependencies = [
 
 angular.module(moduleName, appDependencies).config(config);
 
-config.$inject = [
-    '$resourceProvider',
-    '$translateProvider',
-];
-
 function config (
     $resourceProvider,
     $translateProvider,
@@ -39,7 +34,7 @@ require('./appRun.js');
 require('./appComponents.js');
 
 angular.element(() => {
-    angular.bootstrap(document, [moduleName]);
+    angular.bootstrap(document, [moduleName], { strictDi: true });
 });
 
 /* const appVersion = BUILD.VERSION;
