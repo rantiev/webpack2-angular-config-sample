@@ -6,6 +6,11 @@ angular
 
 function ContactController (
     $scope,
+    logger1,
+    logger2,
 ) {
     $scope.message = 'This is contact baby!';
+
+    logger1.log();
+    logger2.log();
 }
