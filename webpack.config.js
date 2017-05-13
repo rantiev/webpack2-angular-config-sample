@@ -18,7 +18,24 @@ const PATHS = {
     additions: {
         ga: './include/analytics/google/ga.js',
     },
+    node_modules: path.resolve(__dirname, 'node_modules'),
 };
+
+let EXTERNAL_LIBS_REGEX = '';
+
+const EXTERNAL_LIBS = [
+    'angular/angular.js',
+    'lodash/lodash.js',
+    'd3/d3.js',
+    'mapbox-gl/dist/mapbox-gl.js',
+    'node_modules[^!]*\\.css',
+];
+
+EXTERNAL_LIBS.forEach((name, i) => {
+    EXTERNAL_LIBS_REGEX += EXTERNAL_LIBS.length !== i + 1 ? `${name}|` : name;
+});
+
+EXTERNAL_LIBS_REGEX = new RegExp(EXTERNAL_LIBS_REGEX);
 
 const buildCfg = require('./buildCfg.js');
 const TIMESTAMP = Date.now();
@@ -55,7 +72,6 @@ module.exports = function (env) {
                     {
                         test: /\.js$/,
                         include: PATHS.app,
-                        exclude: /node_modules/,
                         use: [
                             'ng-annotate-loader',
                             {
@@ -67,11 +83,31 @@ module.exports = function (env) {
                         ],
                     },
                     {
+                        test: /\.js$/,
+                        include: path.resolve(__dirname, 'node_modules/webworkify/index.js'),
+                        loader: 'worker',
+                    },
+                    {
+                        test: './index.html',
+                        exclude: PATHS.app,
+                        use: [
+                            {
+                                loader: 'underscore-template-loader',
+                                options: {
+                                    root: PATHS.root,
+                                },
+                            },
+                        ],
+                    },
+                    {
                         test: /\.html$/,
-                        loader: 'underscore-template-loader',
-                        options: {
-                            root: PATHS.root,
-                        },
+                        include: PATHS.app,
+                        use: [
+/*                            {
+                                loader: 'ngtemplate-loader'
+                            },*/
+                            'html-loader',
+                        ],
                     },
                     {
                         test: /\.scss$/,
@@ -88,7 +124,20 @@ module.exports = function (env) {
                             'sass-loader',
                         ],
                     },
+                    {
+                        test: /\.css$/,
+                        include: PATHS.node_modules,
+                        use: [
+                            'style-loader',
+                            'css-loader',
+                        ],
+                    },
+                    {
+                        test: /\.(eot|svg|ttf|woff|woff2)$/,
+                        loader: 'file-loader',
+                    },
                 ],
+                //noParse: EXTERNAL_LIBS_REGEX,
             },
             plugins: [
                 new HtmlWebpackPlugin({
@@ -114,15 +163,27 @@ module.exports = function (env) {
                         GOOGLE_API_KEY: JSON.stringify(GOOGLE_API_KEY),
                         MAIN_MODULE_NAME: JSON.stringify(MAIN_MODULE_NAME),
                         TIMESTAMP: JSON.stringify(TIMESTAMP),
+                        ROOT_FOLDER: JSON.stringify(PATHS.root)
                     },
                 }),
                 new webpack.optimize.CommonsChunkPlugin({
                     name: 'vendor',
                     minChunks: function minChunks (module) {
-                        return module.context && module.context.indexOf('node_modules') !== -1;
+                        return module.context && module.context.indexOf('node_modules') !== -1 &&
+                            module.context.indexOf('.css') === -1;
                     },
                 }),
             ],
+            resolve: {
+                modules: [
+                    PATHS.root,
+                    'node_modules',
+                ],
+                alias: {
+                    webworkify: 'webworkify-webpack',
+                    'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js'),
+                },
+            },
         }
     );
 
@@ -135,7 +196,8 @@ module.exports = function (env) {
             parts.extractCSS(PATHS),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
-            parts.banner(buildCfg)
+            parts.banner(buildCfg),
+            parts.analyzer()
         );
     } else if (IS_ENV_QA || IS_ENV_DEV) {
         return merge(
@@ -147,7 +209,8 @@ module.exports = function (env) {
             parts.extractCSS(PATHS),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
-            parts.banner(buildCfg)
+            parts.banner(buildCfg),
+            parts.analyzer()
         );
     }
 
@@ -159,11 +222,12 @@ module.exports = function (env) {
                 hints: false,
             },
         },
-        parts.generateSourcemaps('cheap-module-eval-source-map'),
+        parts.generateSourcemaps('eval'),
         parts.devServer({
             host: process.env.HOST,
             port: process.env.PORT,
         })
-        // ,parts.analyzer()
+        //,parts.analyzer()
+        //,parts.dashboard()
     );
 };

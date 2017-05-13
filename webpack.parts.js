@@ -7,6 +7,7 @@ const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 const WebpackChunkHash = require('webpack-chunk-hash');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 module.exports = {
     devServer,
@@ -17,6 +18,7 @@ module.exports = {
     moveVendors,
     banner,
     analyzer,
+    dashboard,
     json,
     extractJSON,
     copyJSON,
@@ -78,7 +80,12 @@ function extractCSS (paths) {
                         {
                             fallback: 'style-loader',
                             use: [
-                                'css-loader',
+                                {
+                                    loader: 'css-loader',
+                                    options: {
+                                        root: paths.root,
+                                    },
+                                },
                                 'postcss-loader',
                                 'sass-loader',
                             ],
@@ -165,6 +172,14 @@ function analyzer () {
     };
 };
 
+function dashboard () {
+    return {
+        plugins: [
+            new DashboardPlugin(),
+        ],
+    };
+};
+
 function json () {
     return {
         module: {
@@ -238,7 +253,23 @@ function imgsMinified (imagesNameScheme) {
                     test: /\.(jpg|png|svg)$/,
                     use: [
                         `file-loader?name=[path]${imagesNameScheme}.[ext]`,
-                        'image-webpack-loader?bypassOnDebug&optimizationLevel=7',
+                        {
+                            loader: 'image-webpack-loader',
+                            query: {
+                                mozjpeg: {
+                                    progressive: true,
+                                },
+                                gifsicle: {
+                                    interlaced: false,
+                                },
+                                optipng: {
+                                    optimizationLevel: 4,
+                                },
+                                pngquant: {
+                                    quality: 70
+                                },
+                            },
+                        },
                     ],
                 },
             ],
