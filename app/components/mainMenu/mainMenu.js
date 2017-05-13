@@ -1,6 +1,6 @@
 require('./mainMenu.scss');
 
-const template = require('./mainMenu.html')();
+const template = require('./mainMenu.html');
 
 angular
     .module(BUILD.MAIN_MODULE_NAME)

@@ -88,7 +88,7 @@ module.exports = function (env) {
                         loader: 'worker',
                     },
                     {
-                        test: './index.html',
+                        test: /\.html$/,
                         exclude: PATHS.app,
                         use: [
                             {
