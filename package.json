@@ -4,7 +4,7 @@
   "scripts": {
     "prod": "webpack --optimize-minimize --env production",
     "qa": "webpack --optimize-minimize --env development",
-    "dev": "webpack --env sandbox",
+    "dev": "webpack --optimize-minimize --env sandbox",
     "local": "webpack-dev-server --https --progress --profile --watch --env local",
     "lintStyles": "stylelint app/**/*.scss",
     "fixStylesLinting": "stylelint app/**/*.scss --fix",
@@ -16,6 +16,7 @@
     "autoprefixer": "^6.7.7",
     "babel-core": "6.24.1",
     "babel-loader": "7.0.0-beta.1",
+    "babel-plugin-transform-es2015-shorthand-properties": "^6.24.1",
     "babel-preset-env": "1.4.0",
     "babel-preset-es2015": "6.24.1",
     "chunk-manifest-webpack-plugin": "^1.0.0",
@@ -59,6 +60,6 @@
     "angular-translate": "^2.15.1",
     "angular-translate-loader-static-files": "^2.15.1",
     "angular-ui-router": "0.4.2",
-    "lodash": "4.17.2"
+    "lodash": "^4.17.2"
   }
 }

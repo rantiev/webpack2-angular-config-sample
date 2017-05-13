@@ -232,20 +232,23 @@ function copyJSON (path, timestamp) {
     };
 };
 
-function imgs (imagesNameScheme) {
+function imgs (root, imagesNameScheme) {
     return {
         module: {
             rules: [
                 {
                     test: /\.(jpg|png|svg)$/,
                     loader: `file-loader?name=[path]${imagesNameScheme}.[ext]`,
+                    options: {
+                        root,
+                    },
                 },
             ],
         },
     };
 };
 
-function imgsMinified (imagesNameScheme) {
+function imgsMinified (root, imagesNameScheme) {
     return {
         module: {
             rules: [
@@ -266,38 +269,14 @@ function imgsMinified (imagesNameScheme) {
                                     optimizationLevel: 4,
                                 },
                                 pngquant: {
-                                    quality: 70
+                                    quality: 70,
                                 },
+                                root,
                             },
                         },
                     ],
                 },
             ],
         },
-        /*plugins: [
-            new webpack.LoaderOptionsPlugin({
-                options: {
-                    imageWebpackLoader: {
-                        mozjpeg: {
-                            quality: 65,
-                        },
-                        pngquant: {
-                            quality: '65-90',
-                            speed: 4,
-                        },
-                        svgo: {
-                            plugins: [
-                                {
-                                    removeViewBox: false,
-                                },
-                                {
-                                    removeEmptyAttrs: false,
-                                },
-                            ],
-                        },
-                    },
-                },
-            }),
-        ],*/
     };
 };

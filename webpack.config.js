@@ -137,7 +137,7 @@ module.exports = function (env) {
                         loader: 'file-loader',
                     },
                 ],
-                //noParse: EXTERNAL_LIBS_REGEX,
+                noParse: EXTERNAL_LIBS_REGEX,
             },
             plugins: [
                 new HtmlWebpackPlugin({
@@ -191,26 +191,25 @@ module.exports = function (env) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.imgsMinified(imagesNameScheme),
+            parts.imgsMinified(PATHS.root, imagesNameScheme),
             parts.minifyJavaScript({ useSourceMap: false }),
             parts.extractCSS(PATHS),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
-            parts.banner(buildCfg),
-            parts.analyzer()
+            parts.banner(buildCfg)
         );
     } else if (IS_ENV_QA || IS_ENV_DEV) {
         return merge(
             common,
             parts.clean(PATHS.build),
-            parts.imgsMinified(imagesNameScheme),
+            parts.imgsMinified(PATHS.root, imagesNameScheme),
             parts.minifyJavaScript({ useSourceMap: true }),
-            parts.generateSourcemaps('cheap-module-eval-source-map'),
+            parts.generateSourcemaps('eval'),
             parts.extractCSS(PATHS),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
-            parts.banner(buildCfg),
-            parts.analyzer()
+            parts.banner(buildCfg)
+            //parts.analyzer()
         );
     }
 

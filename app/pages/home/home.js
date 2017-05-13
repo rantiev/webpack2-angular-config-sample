@@ -1,3 +1,5 @@
+import { mf1 } from '../../common/modules/megaModule';
+
 require('./home.scss');
 
 angular
@@ -14,3 +16,5 @@ function HomeController (
         $translate.use('de_CH');
     };
 }
+
+mf1();

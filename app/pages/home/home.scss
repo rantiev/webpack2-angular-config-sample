@@ -5,8 +5,41 @@
   font-size: 50px;
 }
 
-.img-from-styles {
-  width: 100px;
-  height: 100px;
-  background: url('../../../imgs/imgInStyles.jpg');
+.icon-64,
+.icon-128 {
+  display: inline-block;
+}
+
+.icon-64 {
+  width: 64px;
+  height: 64px;
+}
+
+.icon-128 {
+  width: 128px;
+  height: 128px;
+}
+
+.icon-analytics-64 {
+  background: url('../../../imgs/icon-analytics-64.png');
+}
+
+.icon-analytics-128 {
+  background: url('../../../imgs/icon-analytics-128.png');
+}
+
+.icon-apple-64 {
+  background: url('../../../imgs/icon-apple-64.png');
+}
+
+.icon-apple-128 {
+  background: url('../../../imgs/icon-apple-128.png');
+}
+
+.icon-announcement-64 {
+  background: url('../../../imgs/icon-announcement-64.png');
+}
+
+.icon-announcement-128 {
+  background: url('../../../imgs/icon-announcement-128.png');
 }

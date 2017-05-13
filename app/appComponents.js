@@ -1,4 +1,4 @@
-const requireAll = require('../webpack.helpers.js').requireAll;
+const requireAll = require('./common/modules/requireAll.js').requireAll;
 
 requireAll(require.context('./common/services', true, /.js$/));
 
