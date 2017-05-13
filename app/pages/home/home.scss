@@ -1,3 +1,5 @@
+@import '../../common/styles/sprite.scss';
+
 .home-message {
   padding: 200px;
   margin: 0 auto;
@@ -5,41 +7,22 @@
   font-size: 50px;
 }
 
-.icon-64,
-.icon-128 {
+*[class^=icon-] {
   display: inline-block;
 }
 
-.icon-64 {
-  width: 64px;
-  height: 64px;
-}
-
-.icon-128 {
-  width: 128px;
-  height: 128px;
-}
-
-.icon-analytics-64 {
-  background: url('../../../imgs/icon-analytics-64.png');
-}
-
-.icon-analytics-128 {
-  background: url('../../../imgs/icon-analytics-128.png');
-}
-
 .icon-apple-64 {
-  background: url('../../../imgs/icon-apple-64.png');
+  @include sprite($icon-apple-64);
 }
 
 .icon-apple-128 {
-  background: url('../../../imgs/icon-apple-128.png');
+  @include sprite($icon-apple-128);
 }
 
 .icon-announcement-64 {
-  background: url('../../../imgs/icon-announcement-64.png');
+  @include sprite($icon-announcement-64);
 }
 
 .icon-announcement-128 {
-  background: url('../../../imgs/icon-announcement-128.png');
+  @include sprite($icon-announcement-128);
 }

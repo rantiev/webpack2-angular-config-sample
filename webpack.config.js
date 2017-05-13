@@ -4,6 +4,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SpritesmithPlugin = require('webpack-spritesmith');
 
 // Load config for HMR
 const parts = require('./webpack.parts');
@@ -140,6 +141,19 @@ module.exports = function (env) {
                 noParse: EXTERNAL_LIBS_REGEX,
             },
             plugins: [
+                new SpritesmithPlugin({
+                    src: {
+                        cwd: `${PATHS.imgs}/sprites/png`,
+                        glob: '*.png',
+                    },
+                    target: {
+                        image: `${PATHS.imgs}/sprite.png`,
+                        css: `${PATHS.root}/app/common/styles/sprite.scss`,
+                    },
+                    apiOptions: {
+                        cssImageRef: '../../../imgs/sprite.png',
+                    },
+                }),
                 new HtmlWebpackPlugin({
                     title: buildCfg.ANGULAR.MAIN_MODULE_NAME,
                     filename: 'index.html',
@@ -178,6 +192,7 @@ module.exports = function (env) {
                 modules: [
                     PATHS.root,
                     'node_modules',
+                    'spritesmith-generated',
                 ],
                 alias: {
                     webworkify: 'webworkify-webpack',
