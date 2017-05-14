@@ -5,6 +5,7 @@ const _ = require('lodash');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SpritesmithPlugin = require('webpack-spritesmith');
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 // Load config for HMR
 const parts = require('./webpack.parts');
@@ -13,6 +14,7 @@ const PATHS = {
     root: path.resolve(__dirname),
     app: path.resolve(__dirname, 'app'),
     imgs: path.resolve(__dirname, 'imgs'),
+    imgsSprites: path.resolve(__dirname, 'imgs/sprites'),
     entry: path.resolve(__dirname, 'app/app'),
     build: path.resolve(__dirname, 'build'),
     translations: path.resolve(__dirname, 'app/translation'),
@@ -104,43 +106,41 @@ module.exports = function (env) {
                         test: /\.html$/,
                         include: PATHS.app,
                         use: [
-/*                            {
-                                loader: 'ngtemplate-loader'
-                            },*/
                             'html-loader',
                         ],
                     },
                     {
-                        test: /\.scss$/,
-                        include: PATHS.app,
-                        use: [
-                            'style-loader',
-                            {
-                                loader: 'css-loader',
-                                options: {
-                                    root: PATHS.root,
-                                },
-                            },
-                            'postcss-loader',
-                            'sass-loader',
-                        ],
-                    },
-                    {
-                        test: /\.css$/,
-                        include: PATHS.node_modules,
-                        use: [
-                            'style-loader',
-                            'css-loader',
-                        ],
-                    },
-                    {
-                        test: /\.(eot|svg|ttf|woff|woff2)$/,
+                        test: /\.(eot|ttf|woff|woff2)$/,
                         loader: 'file-loader',
+                    },
+                   /* {
+                        test: /\.svg$/,
+                        include: PATHS.imgs,
+                        exclude: PATHS.imgsSprites,
+                        use: [
+                            'file-loader',
+                            'svg-fill-loader',
+                            'svgo-loader',
+                        ],
+                    },*/
+                    {
+                        test: /\.svg$/,
+                        include: PATHS.imgs,
+                        use: [
+                            {
+                                loader: 'svg-sprite-loader',
+                                /*options: {
+                                    extract: true,
+                                    spriteFilename: 'sprite.[hash].svg',
+                                },*/
+                            },
+                        ],
                     },
                 ],
                 noParse: EXTERNAL_LIBS_REGEX,
             },
             plugins: [
+                new SpriteLoaderPlugin(),
                 new SpritesmithPlugin({
                     src: {
                         cwd: `${PATHS.imgs}/sprites/png`,
@@ -219,8 +219,8 @@ module.exports = function (env) {
             parts.clean(PATHS.build),
             parts.imgsMinified(PATHS.root, imagesNameScheme),
             parts.minifyJavaScript({ useSourceMap: true }),
-            parts.generateSourcemaps('eval'),
             parts.extractCSS(PATHS),
+            parts.generateSourcemaps('eval'),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
             parts.banner(buildCfg)
@@ -236,6 +236,7 @@ module.exports = function (env) {
                 hints: false,
             },
         },
+        parts.extractCSS(PATHS),
         parts.generateSourcemaps('eval'),
         parts.devServer({
             host: process.env.HOST,

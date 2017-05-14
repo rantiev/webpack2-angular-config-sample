@@ -26,3 +26,10 @@
 .icon-announcement-128 {
   @include sprite($icon-announcement-128);
 }
+
+.icon-twitter-64 {
+  width: 64px;
+  height: 64px;
+  background: url('../../../imgs/twitter.svg') no-repeat;
+  background-size: contain;
+}

@@ -2,7 +2,7 @@
 <button ng-click="translate()">translate</button>
 
 <div>
-	<h2>Png Icons from HTML</h2>
+	<h2>Png Icons from HTML (not using sprite)</h2>
 	<img src="../../../imgs/icon-addition-64.png" alt="addition 64.png" />
 	<img src="../../../imgs/icon-addition-128.png" alt="addition 128.png" />
 	<img src="../../../imgs/icon-analytics-64.png" alt="analytics 64.png" />
@@ -10,9 +10,21 @@
 </div>
 
 <div>
-	<h2>Png Icons from CSS</h2>
-	<div class="icon-64 icon-apple-64"></div>
-	<div class="icon-128 icon-apple-128"></div>
-	<div class="icon-64 icon-announcement-64"></div>
-	<div class="icon-128 icon-announcement-128"></div>
+	<h2>Png Icons from CSS (using sprite)</h2>
+	<div class="icon-apple-64"></div>
+	<div class="icon-apple-128"></div>
+	<div class="icon-announcement-64"></div>
+	<div class="icon-announcement-128"></div>
+</div>
+
+<div>
+	<h2>SVG Icons from HTML (not using sprite)</h2>
+	<svg>
+		<use xlink:href="#twitter"></use>
+	</svg>
+</div>
+
+<div>
+	<h2>SVG Icons from HTML (not using sprite)</h2>
+	<div class="icon-twitter-64"></div>
 </div>

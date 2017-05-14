@@ -1,4 +1,5 @@
 import { mf1 } from '../../common/modules/megaModule';
+import iconTwitter from '../../../imgs/twitter.svg';
 
 require('./home.scss');
 

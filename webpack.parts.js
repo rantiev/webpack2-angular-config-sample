@@ -12,6 +12,7 @@ const DashboardPlugin = require('webpack-dashboard/plugin');
 module.exports = {
     devServer,
     extractCSS,
+    extractHTML,
     minifyJavaScript,
     generateSourcemaps,
     clean,
@@ -92,11 +93,40 @@ function extractCSS (paths) {
                         }
                     ),
                 },
+                {
+                    test: /\.css$/,
+                    include: paths.node_modules,
+                    use: [
+                        'style-loader',
+                        'css-loader',
+                    ],
+                },
             ],
         },
         plugins: [
             new ExtractTextPlugin({
                 filename: '[name].[chunkhash].css',
+                disable: false,
+                allChunks: true,
+            }),
+        ],
+    };
+};
+
+function extractHTML (paths) {
+    return {
+        module: {
+            rules: [
+                {
+                    test: /\.html/,
+                    include: paths.app,
+                    use: ExtractTextPlugin.extract({use: 'html-loader'}),
+                }
+            ],
+        },
+        plugins: [
+            new ExtractTextPlugin({
+                filename: '[name].[chunkhash].html',
                 disable: false,
                 allChunks: true,
             }),
@@ -237,7 +267,7 @@ function imgs (root, imagesNameScheme) {
         module: {
             rules: [
                 {
-                    test: /\.(jpg|png|svg)$/,
+                    test: /\.(jpg|png)$/,
                     loader: `file-loader?name=[path]${imagesNameScheme}.[ext]`,
                     options: {
                         root,
@@ -253,7 +283,7 @@ function imgsMinified (root, imagesNameScheme) {
         module: {
             rules: [
                 {
-                    test: /\.(jpg|png|svg)$/,
+                    test: /\.(jpg|png)$/,
                     use: [
                         `file-loader?name=[path]${imagesNameScheme}.[ext]`,
                         {
