@@ -180,6 +180,11 @@ module.exports = function (env) {
                         ROOT_FOLDER: JSON.stringify(PATHS.root),
                     },
                 }),
+                //TODO: Chunk files splitting doesn't work
+/*                new webpack.optimize.AggressiveSplittingPlugin({
+                    minSize: 10000,
+                    maxSize: 400000,
+                }),*/
                 new webpack.optimize.CommonsChunkPlugin({
                     name: 'vendor',
                     minChunks: function minChunks (module) {
