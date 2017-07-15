@@ -27,11 +27,11 @@ const PATHS = {
 let EXTERNAL_LIBS_REGEX = '';
 
 const EXTERNAL_LIBS = [
-    'angular/angular.js',
+/*    'angular/angular.js',
     'lodash/lodash.js',
     'd3/d3.js',
     'mapbox-gl/dist/mapbox-gl.js',
-    'node_modules[^!]*\\.css',
+    'node_modules[^!]*\\.css',*/
 ];
 
 EXTERNAL_LIBS.forEach((name, i) => {
@@ -137,7 +137,7 @@ module.exports = function (env) {
                         ],
                     },
                 ],
-                noParse: EXTERNAL_LIBS_REGEX,
+                //noParse: EXTERNAL_LIBS_REGEX,
             },
             plugins: [
                 new SpriteLoaderPlugin(),
@@ -177,7 +177,7 @@ module.exports = function (env) {
                         GOOGLE_API_KEY: JSON.stringify(GOOGLE_API_KEY),
                         MAIN_MODULE_NAME: JSON.stringify(MAIN_MODULE_NAME),
                         TIMESTAMP: JSON.stringify(TIMESTAMP),
-                        ROOT_FOLDER: JSON.stringify(PATHS.root)
+                        ROOT_FOLDER: JSON.stringify(PATHS.root),
                     },
                 }),
                 new webpack.optimize.CommonsChunkPlugin({
@@ -199,7 +199,7 @@ module.exports = function (env) {
                     'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js'),
                 },
             },
-        }
+        },
     );
 
     if (IS_ENV_PROD) {
@@ -208,10 +208,10 @@ module.exports = function (env) {
             parts.clean(PATHS.build),
             parts.imgsMinified(PATHS.root, imagesNameScheme),
             parts.minifyJavaScript({ useSourceMap: false }),
-            parts.extractCSS(PATHS),
+            parts.processCSS(PATHS),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
-            parts.banner(buildCfg)
+            parts.banner(buildCfg),
         );
     } else if (IS_ENV_QA || IS_ENV_DEV) {
         return merge(
@@ -219,11 +219,11 @@ module.exports = function (env) {
             parts.clean(PATHS.build),
             parts.imgsMinified(PATHS.root, imagesNameScheme),
             parts.minifyJavaScript({ useSourceMap: true }),
-            parts.extractCSS(PATHS),
+            parts.processCSS(PATHS),
             parts.generateSourcemaps('eval'),
             parts.copyJSON(PATHS.translations, TIMESTAMP),
             parts.moveVendors(),
-            parts.banner(buildCfg)
+            parts.banner(buildCfg),
             //parts.analyzer()
         );
     }
@@ -236,13 +236,14 @@ module.exports = function (env) {
                 hints: false,
             },
         },
-        parts.extractCSS(PATHS),
+        parts.processCSS(PATHS),
         parts.generateSourcemaps('eval'),
         parts.devServer({
             host: process.env.HOST,
             port: process.env.PORT,
-        })
-        //,parts.analyzer()
-        //,parts.dashboard()
+        }),
+        //parts.analyzer(),
+        //parts.dashboard(),
     );
 };
+

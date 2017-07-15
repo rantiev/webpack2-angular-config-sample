@@ -1,3 +1,5 @@
+import angular from 'angular';
+
 require('./mainMenu.scss');
 
 const template = require('./mainMenu.html');

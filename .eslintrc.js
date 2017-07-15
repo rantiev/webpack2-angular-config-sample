@@ -27,6 +27,7 @@ module.exports = {
                 "body": 1
             }
         }],
+        "object-curly-spacing": 0,
         "space-before-function-paren": ["error", { "anonymous": "always", "named": "always" }],
         "no-param-reassign": ["error", { "props": false }],
         "no-unused-vars": "off",

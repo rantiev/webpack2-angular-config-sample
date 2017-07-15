@@ -1,3 +1,5 @@
+import _ from 'lodash/core';
+import angular from 'angular';
 import { mf1 } from '../../common/modules/megaModule';
 import iconTwitter from '../../../imgs/twitter.svg';
 
@@ -16,6 +18,11 @@ function HomeController (
     $scope.translate = function translate () {
         $translate.use('de_CH');
     };
+
+    console.log(_.keys({
+        a: 1,
+        b: 2,
+    }));
 }
 
 mf1();

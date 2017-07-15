@@ -11,7 +11,7 @@ const DashboardPlugin = require('webpack-dashboard/plugin');
 
 module.exports = {
     devServer,
-    extractCSS,
+    processCSS,
     extractHTML,
     minifyJavaScript,
     generateSourcemaps,
@@ -68,16 +68,16 @@ function devServer (options) {
             ]),
         ],
     };
-};
+}
 
-function extractCSS (paths) {
+function processCSS (paths) {
     return {
         module: {
             rules: [
                 {
                     test: /\.scss$/,
                     include: paths.app,
-                    use: ExtractTextPlugin.extract(
+                    /* use: ExtractTextPlugin.extract(
                         {
                             fallback: 'style-loader',
                             use: [
@@ -90,8 +90,19 @@ function extractCSS (paths) {
                                 'postcss-loader',
                                 'sass-loader',
                             ],
-                        }
-                    ),
+                        },
+                    ),*/
+                    use: [
+                        'style-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                root: paths.root,
+                            },
+                        },
+                        'postcss-loader',
+                        'sass-loader',
+                    ],
                 },
                 {
                     test: /\.css$/,
@@ -103,15 +114,15 @@ function extractCSS (paths) {
                 },
             ],
         },
-        plugins: [
+        /*plugins: [
             new ExtractTextPlugin({
                 filename: '[name].[chunkhash].css',
                 disable: false,
                 allChunks: true,
             }),
-        ],
+        ],*/
     };
-};
+}
 
 function extractHTML (paths) {
     return {
@@ -120,8 +131,8 @@ function extractHTML (paths) {
                 {
                     test: /\.html/,
                     include: paths.app,
-                    use: ExtractTextPlugin.extract({use: 'html-loader'}),
-                }
+                    use: ExtractTextPlugin.extract({ use: 'html-loader' }),
+                },
             ],
         },
         plugins: [
@@ -132,7 +143,7 @@ function extractHTML (paths) {
             }),
         ],
     };
-};
+}
 
 function minifyJavaScript ({ useSourceMap }) {
     return {
@@ -151,13 +162,13 @@ function minifyJavaScript ({ useSourceMap }) {
             }),
         ],
     };
-};
+}
 
 function generateSourcemaps (type) {
     return {
         devtool: type,
     };
-};
+}
 
 function clean (path) {
     return {
@@ -165,7 +176,7 @@ function clean (path) {
             new CleanWebpackPlugin(path),
         ],
     };
-};
+}
 
 function moveVendors () {
     return {
@@ -181,18 +192,18 @@ function moveVendors () {
             }),
         ],
     };
-};
+}
 
 function banner (cfg) {
     return {
         plugins: [
             new webpack.BannerPlugin({
-                banner: cfg.ANGULAR.MAIN_MODULE_NAME + ' ' + cfg.APP_VERSION,
+                banner: `${cfg.ANGULAR.MAIN_MODULE_NAME} ${cfg.APP_VERSION}`,
                 entryOnly: true,
             }),
         ],
     };
-};
+}
 
 function analyzer () {
     return {
@@ -200,7 +211,7 @@ function analyzer () {
             new BundleAnalyzerPlugin(),
         ],
     };
-};
+}
 
 function dashboard () {
     return {
@@ -208,7 +219,7 @@ function dashboard () {
             new DashboardPlugin(),
         ],
     };
-};
+}
 
 function json () {
     return {
@@ -221,7 +232,7 @@ function json () {
             ],
         },
     };
-};
+}
 
 function extractJSON (path) {
     return {
@@ -236,7 +247,7 @@ function extractJSON (path) {
                             use: [
                                 'json-loader',
                             ],
-                        }
+                        },
                     ),
                 },
             ],
@@ -249,7 +260,7 @@ function extractJSON (path) {
             }),
         ],
     };
-};
+}
 
 function copyJSON (path, timestamp) {
     return {
@@ -260,7 +271,7 @@ function copyJSON (path, timestamp) {
             }]),
         ],
     };
-};
+}
 
 function imgs (root, imagesNameScheme) {
     return {
@@ -276,7 +287,7 @@ function imgs (root, imagesNameScheme) {
             ],
         },
     };
-};
+}
 
 function imgsMinified (root, imagesNameScheme) {
     return {
@@ -309,4 +320,4 @@ function imgsMinified (root, imagesNameScheme) {
             ],
         },
     };
-};
+}

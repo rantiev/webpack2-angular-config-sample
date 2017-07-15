@@ -1,3 +1,5 @@
+import angular from 'angular';
+
 require('./contact.scss');
 
 angular

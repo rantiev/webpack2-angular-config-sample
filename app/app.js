@@ -1,3 +1,5 @@
+import angular from 'angular';
+
 require('./style.scss');
 require('./appVendors.js');
 
@@ -33,11 +35,10 @@ function config (
 require('./appConfig.js');
 require('./appRouting.js');
 require('./appRun.js');
-
 require('./appComponents.js');
 
 angular.element(() => {
-    angular.bootstrap(document, [moduleName], { strictDi: true });
+    angular.bootstrap(document, [moduleName], { strictDi: !BUILD.IS_ENV_LOCAL });
 });
 
 /* const appVersion = BUILD.VERSION;
